@@ -1,116 +1,109 @@
 
-function loadPeople() {
-    console.log("something");
-    
+function loadEvents() {
+    loadPeople()
+    loadPlanets()
+    loadStarships()
+}
+
+function loadPeople() {    
     const url = "https://www.swapi.tech/api/people";
     fetch(url)
         .then(function(response){
             return response.json();
         })
         .then(function(json) {
-            let results = "";
-            console.log(json);
-
+            let results = "<h1>PEOPLE</h1>";
             let people = json.results;
             people.forEach(function(person) {
-                results += "<button onclick=\"loadInfo(this.value)\" value=\"" + person.name + "\">" + person.name + "</button>";
+                results += "<div class='buttons'><button onclick=\"loadNameInfo(this.value)\" value=\"" + person.url + "\">" + person.name + "</button></div>";
             })
-
             document.getElementById("starwars_people").innerHTML = results;
         })   
-    
 }
 
-function loadInfo(name) {
-    console.log(name);
-    document.getElementById("extra_info").innerHTML = "<p>" + name + "</p>";
-}
-
-
-document.getElementById("weatherSubmit").addEventListener("click", function(event) {
-    event.preventDefault();
-    const value = document.getElementById("weatherInput").value;
-    if (value === "")
-    return;
-
-    const url = "http://api.openweathermap.org/data/2.5/weather?q=" + value + ",US&units=imperial" + "&APPID=668688cbc6435fd2de077db90e51e8a0";
+function loadPlanets() {    
+    const url = "https://www.swapi.tech/api/planets";
     fetch(url)
-        .then(function(response) {
-        return response.json();
+        .then(function(response){
+            return response.json();
         })
         .then(function(json) {
-            let results = "";
-            results += '<h2>Weather in ' + json.name + " Today!</h2>";
-            results += '<h2>' + json.main.temp + " &deg;F    -    feels like " + json.main.feels_like + " &deg;F</h2>"
-            
-            results += "<div id=\"today\">"
-            for (let i=0; i < json.weather.length; i++) {
-                results += '<div><img src="http://openweathermap.org/img/w/' + json.weather[i].icon + '.png"/></div>';
-            }
-            results += "<div><p>"
-            for (let i=0; i < json.weather.length; i++) {
-                results += json.weather[i].description
-                if (i !== json.weather.length - 1)
-                    results += ", "
-            }
-            results += "</p></div>"
-            results += "<div><p>Low- " + parseInt(json.main.temp_min) + "  High- " + parseInt(json.main.temp_max) + "</p></div>"
-            results += "<div><p>"
-            results += "Wind Speed - " + json.wind.speed + " MPH"
-            results += "</p></div>"
-            results += "<div><p>"
-            var date = new Date(1000*json.sys.sunrise);
+            let results = "<h1>PLANETS</h1>";
+            let planets = json.results;
+            planets.forEach(function(planet) {
+                results += "<div class='buttons'><button onclick=\"loadPlanetInfo(this.value)\" value=\"" + planet.url + "\">" + planet.name + "</button></div>";
+            })
+            document.getElementById("starwars_planets").innerHTML = results;
+        })   
+}
 
-            results += "Sunrise - " + date.getHours() + ":" + padLeadingZeros(date.getMinutes(),2) + "." + date.getSeconds() + " AM"
-            results += "</p></div>"
-            results += "<div><p>"
-            date = new Date(1000*json.sys.sunset);
-            results += "Sunset - " + norm(date.getHours()) + ":" + padLeadingZeros(date.getMinutes(),2) + "." + date.getSeconds() + " PM"
-            results += "</p></div>"
-
-            results += "</div>"
-            document.getElementById("weatherResults").innerHTML = results;
-        });
-
-
-        const url2 = "http://api.openweathermap.org/data/2.5/forecast?q=" + value + ", US&units=imperial" + "&APPID=307c87a3d38cb964afc43c18f9b5bf29";
-        fetch(url2)
-          .then(function(response) {
+function loadStarships() {    
+    const url = "https://www.swapi.tech/api/starships";
+    fetch(url)
+        .then(function(response){
             return response.json();
-          }).then(function(json) {
-            let forecast = "";
-
-
-            var day = new Date();
-
-            for (let i=0; i < json.list.length; i++) {
-                var tempDay = new Date(1000*json.list[i].dt);
-                if (day.getDate() != tempDay.getDate() || i==0) {
-                    day = tempDay;
-                    if (i!=0) forecast += "</div>"
-                    forecast += "<div class=\"day_box\" id=\"day" + day.getDate() + "\">";
-                    forecast += "<h2>" + month[day.getMonth()] + " " + day.getDate() + "</h2>";
-                }
-
-                
-                forecast += "<div id=\"time_slot\"><p><div id=\"time\">" + moment(tempDay.toLocaleString()).format('h:mm a') + "</div>"
-                forecast += "   Temperature:   " + parseInt(json.list[i].main.temp) + "&deg;F</p>";
-                forecast += '<img src="http://openweathermap.org/img/w/' + json.list[i].weather[0].icon + '.png"/></div>'
-            }
-
-            document.getElementById("forecastResults").innerHTML = forecast;
-            console.log(json);
-          });
-});
-
-function norm (time) {
-    if (time > 12) return time - 12;
-    return time;
+        })
+        .then(function(json) {
+            let results = "<h1>STARSHIPS</h1>";
+            let ships = json.results;
+            ships.forEach(function(ship) {
+                results += "<div class='buttons'><button onclick=\"loadShipInfo(this.value)\" value=\"" + ship.url + "\">" + ship.name + "</button></div>";
+            })
+            document.getElementById("starwars_ships").innerHTML = results;
+        })   
 }
 
-
-function padLeadingZeros(num, size) {
-    var s = num+"";
-    while (s.length < size) s = "0" + s;
-    return s;
+function getObject(url) {
+    return fetch(url)
+        .then(function(response){
+            return response.json();
+        })
+        .then(function(json) {
+            return json.result
+        })
 }
+
+async function loadNameInfo(url) {
+    let person = await getObject(url)
+    let homeworld = await getObject(person.properties.homeworld)
+    console.log(person)
+    console.log(homeworld)
+    let preposition = ""
+    let organic = ""
+    if (person.properties.gender == "male") {
+        preposition = "he"
+        organic = "born"
+    } else if (person.properties.gender == "female") {
+        preposition = "she"
+        organic = "born"
+    } else {
+        preposition = ""
+        organic = "created"
+    }
+
+    let info = "<h2 class='horizontal'>" + person.properties.name + "</h2>"
+    info += "<div>" + person.properties.name + " is from the planet "
+    info += "<button onclick=\"loadPlanetInfo(this.value)\" value=\"" + person.properties.homeworld + "\">" + homeworld.properties.name + "</button>"
+    info += " and " + preposition + " was " + organic + " in the year " + person.properties.birth_year + ".<p><div>"
+    info += "<div id='facts'>"
+    info += "<div><p></p></div>"
+    info += "</div>"
+    document.getElementById("extra_info").innerHTML = info
+}
+
+async function loadPlanetInfo(url) {
+    let planet = await getObject(url)
+
+    let info = "<h2>" + planet.properties.name + "</h2>"
+
+    document.getElementById("extra_info").innerHTML = info
+}
+
+async function loadShipInfo(url) {
+    let ship = await getObject(url)
+
+    let info = "<h2>" + ship.properties.name + "</h2>"
+
+    document.getElementById("extra_info").innerHTML = info
+}
+

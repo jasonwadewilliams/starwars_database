@@ -4,25 +4,26 @@
 <head>
   <meta charset="utf-8" />
   <title>Star Wars DB</title>
+  <link href="https://allfont.net/allfont.css?fonts=star-jedi" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="/styles.css">
   <script src="//code.jquery.com/jquery.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 </head>
 
-<body onload="loadPeople()">
+<body onload="loadEvents()">
 
   <div id="top">
-    <h1>Star Wars Database</h1>
+    <h1>STARWARS DATABASE</h1>
   </div>
 
   <div id="page_container">
     <div class="center">
-      <label>Did You Know?</label>
-      <div id="extra_info"></div>
+      <div id="extra_info"><h2>Select a character, planet, or starship to learn more!</h2></div>
     </div>
-    <div id="starwars_people">
-    </div>
-    <div id="forecastResults">
+    <div class="horizontal">
+      <div id="starwars_people"></div>
+      <div id="starwars_planets"></div>
+      <div id="starwars_ships"></div>
     </div>
 
     <div id="foot-placeholder"></div>
