@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Star Wars DB</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="//code.jquery.com/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+</head>
+
+<body onload="loadPeople()">
+
+  <div id="top">
+    <h1>Star Wars Database</h1>
+  </div>
+
+  <div id="page_container">
+    <div class="center">
+      <label>Did You Know?</label>
+      <div id="extra_info"></div>
+    </div>
+    <div id="starwars_people">
+    </div>
+    <div id="forecastResults">
+    </div>
+
+    <div id="foot-placeholder"></div>
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+  <script text="type/javascript" src="/script.js">
+  </script>
+
+  <script>
+    $(function(){
+        $("#foot-placeholder").load("footer.html");
+    });
+  </script>
+
+</body>
+
+</html>
