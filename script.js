@@ -63,11 +63,37 @@ function getObject(url) {
         })
 }
 
+function getPeopleUrls() {
+    const url = "https://www.swapi.tech/api/people";
+    return fetch(url)
+        .then(function(response){
+            return response.json();
+        })
+        .then(function(json) {
+            let people = json.results;
+            let peopleArray = []
+            people.forEach(function(person) {
+                peopleArray.push(person.url)
+            })
+            return peopleArray
+        })  
+}
+
+async function checkPlanetPeople(planetUrl) {
+    let personArray = await getPeopleUrls()
+    let peopleFromPlanet = []
+    for (var i=0; i<personArray.length; i++) {
+        let person = await getObject(personArray[i])
+        if (person.properties.homeworld == planetUrl) {
+            peopleFromPlanet.push(person)
+        }
+    }
+    return peopleFromPlanet
+}
+
 async function loadNameInfo(url) {
     let person = await getObject(url)
     let homeworld = await getObject(person.properties.homeworld)
-    console.log(person)
-    console.log(homeworld)
     let preposition = ""
     let organic = ""
     if (person.properties.gender == "male") {
@@ -82,11 +108,15 @@ async function loadNameInfo(url) {
     }
 
     let info = "<h2 class='horizontal'>" + person.properties.name + "</h2>"
-    info += "<div>" + person.properties.name + " is from the planet "
+    info += "<div class='middle'>" + person.properties.name + " is from the planet "
     info += "<button onclick=\"loadPlanetInfo(this.value)\" value=\"" + person.properties.homeworld + "\">" + homeworld.properties.name + "</button>"
     info += " and " + preposition + " was " + organic + " in the year " + person.properties.birth_year + ".<p><div>"
-    info += "<div id='facts'>"
-    info += "<div><p></p></div>"
+    info += "<div class='horizontal'>"
+    info += "<div id='facts'><p>Hair Color: " + person.properties.hair_color + "</p></div>"
+    info += "<div id='facts'><p>Eye Color: " + person.properties.eye_color + "</p></div>"
+    info += "<div id='facts'><p>Height: " + person.properties.height + "cm</p></div>"
+    info += "<div id='facts'><p>Weight: " + person.properties.mass + "Kgs</p></div>"
+    info += "<div id='facts'><p>Skin Color: " + person.properties.skin_color + "</p></div>"
     info += "</div>"
     document.getElementById("extra_info").innerHTML = info
 }
@@ -94,15 +124,40 @@ async function loadNameInfo(url) {
 async function loadPlanetInfo(url) {
     let planet = await getObject(url)
 
-    let info = "<h2>" + planet.properties.name + "</h2>"
+    let info = "<h2 class='horizontal'>" + planet.properties.name + "</h2>"
+    info += "<div class='middle'>" + planet.properties.name + " is a planet is " + planet.properties.climate + " and " + planet.properties.terrain + ".</p></div>"
+    info += "<div class='horizontal'>"
+    info += "<div id='facts'><p>Diameter: " + planet.properties.diameter + "</p></div>"
+    info += "<div id='facts'><p>Gravity: " + planet.properties.gravity + "</p></div>"
+    info += "<div id='facts'><p>Days in a Year: " + planet.properties.orbital_period + "cm</p></div>"
+    info += "<div id='facts'><p>Hours in a Day: " + planet.properties.rotation_period + "Kgs</p></div>"
+    info += "<div id='facts'><p>Population: " + planet.properties.population + "</p></div>"
+    info += "</div>"
+    info += "<div class='horizontal'>"
 
+    info += "<p>People from " + planet.properties.name + "</p>"
+    let personArray = await checkPlanetPeople(planet.properties.url)
+    for (var i=0; i<personArray.length; i++) {
+        info += "<button onclick=\"loadNameInfo(this.value)\" value=\"" + personArray[i].properties.url + "\">" + personArray[i].properties.name + "</button>"
+    }
+    info += "</div>"
     document.getElementById("extra_info").innerHTML = info
 }
 
+
+
 async function loadShipInfo(url) {
     let ship = await getObject(url)
-
-    let info = "<h2>" + ship.properties.name + "</h2>"
+    console.log(ship)
+    let info = "<h2 class='horizontal'>" + ship.properties.name + "</h2>"
+    info += "<div class='middle'>The " + ship.properties.name + " is " + ship.description + " made by " + ship.properties.manufacturer + ".</p></div>"
+    info += "<div class='horizontal'>"
+    info += "<div id='facts'><p>Passenger Capacity: " + ship.properties.passengers + "</p></div>"
+    info += "<div id='facts'><p>cargo Capacity: " + ship.properties.cargo_capacity + "</p></div>"
+    info += "<div id='facts'><p>Length: " + ship.properties.length + "</p></div>"
+    info += "<div id='facts'><p>Hyperdrive Rating: " + ship.properties.hyperdrive_rating + "</p></div>"
+    info += "<div id='facts'><p>Cost: " + ship.properties.cost_in_credits + "-credits</p></div>"
+    info += "</div>"
 
     document.getElementById("extra_info").innerHTML = info
 }

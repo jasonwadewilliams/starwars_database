@@ -67,9 +67,17 @@ button:hover {
     background-color: rgb(25,25,25);
 }
 
+.middle {
+    text-align: center;
+}
+
 .horizontal {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
+}
+
+#facts {
+    padding: 0px 20px 0px 20px;
 }
 
 a {
